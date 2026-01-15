@@ -1,0 +1,47 @@
+services:
+  # client-web:
+  #   depends_on:
+  #     - api
+  api:
+    container_name: go-api
+    volumes:
+      - ./backend:/app:rw
+    build:
+      context: ./backend/
+      dockerfile: backend.Dockerfile
+    ports:
+      - "8001:8000"
+    tty: true
+    stdin_open: true
+    env_file:
+      - ./backend/.env.development
+    develop:
+      watch:
+        - path: ./backend/
+          action: rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      - db
+  db:
+    container_name: postgres-db
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=admin
+  adminer:
+    container_name: amdiner
+    image: adminer
+    ports:
+      - "8081:8080"
+
+volumes:
+  pgdata:
