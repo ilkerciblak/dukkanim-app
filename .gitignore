@@ -5,3 +5,4 @@
 */prod.*.Dockerfile
 prod.docker-compose.yml
 prod.docker-compose.yaml
+backend/bin
