@@ -1,0 +1,41 @@
+{
+  "name": " Application Go-Backend Dev Container",
+  "dockerComposeFile": "../../dev.docker-compose.yml",
+  "service": "api",
+  "workspaceFolder": "/app",
+  "remoteUser": "root",
+  // "postCreateCommand": "go mod tidy",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.useLanguageServer": true,
+        "go.lintTool": "golangci-lint",
+        "go.lintOnSave": "file",
+        "go.inlayHints.assignVariableTypes": true,
+        "go.inlayHints.constantValues": true,
+        "go.inlayHints.functionTypeParameters": true,
+        "go.inlayHints.rangeVariableTypes": true,
+        "go.inlayHints.compositeLiteralTypes": true,
+        "go.inlayHints.compositeLiteralFields": true,
+        "go.inlayHints.parameterNames": true,
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-containers",
+        "ms-vscode-remote.remote-containers",
+        "ms-azuretools.vscode-docker",
+        "usernamehw.errorlens",
+        "SeyyedKhandon.firacode",
+        "golang.go",
+        "PKief.material-icon-theme",
+        "illixion.vscode-vibrancy-continued",
+        "vscodevim.vim",
+        "AndenetAlexander.vim-cheatsheet",
+        "zxh404.vscode-proto3",
+        "adpyke.codesnap",
+        "zhuangtongfa.Material-theme",
+        "GitHub.github-vscode-theme"
+      ]
+    }
+  }
+}
