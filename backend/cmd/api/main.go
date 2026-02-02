@@ -6,6 +6,7 @@ import (
 	"dukkanim-api/internal/platform/config"
 	"dukkanim-api/internal/platform/database/mongodb"
 	"dukkanim-api/internal/platform/database/postgres"
+	"dukkanim-api/internal/platform/database/redis"
 	logging "dukkanim-api/internal/platform/observability/logging/adapter"
 	metrics "dukkanim-api/internal/platform/observability/metrics/adapter"
 	tracing "dukkanim-api/internal/platform/observability/tracing/adapter"
@@ -49,6 +50,13 @@ func main() {
 			errChan <- err
 		}
 	}()
+
+	redisDb, err := redis.Redis(ctx, cfg.REDIS_ADDR, "", 0)
+	if err != nil {
+		errChan <- err
+	}
+
+	defer redisDb.Conn().Close()
 
 	if err := goose.Up(sql_db.Connection, "migrations/"); err != nil {
 		errChan <- err

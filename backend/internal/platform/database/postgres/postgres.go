@@ -50,7 +50,7 @@ func PostgresDB(ctx context.Context, connection_string string) (*postgresDB, err
 	var err error
 
 	for i := range 5 {
-		fmt.Printf("Attempting to open postgres connection: attemp#[%d]\n", i)
+		fmt.Printf("Attempting to open postgres connection: attempt#[%d]\n", i+1)
 		db, err = newConnection(ctx, connection_string)
 		if err == nil {
 			break
