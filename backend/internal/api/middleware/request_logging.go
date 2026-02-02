@@ -2,8 +2,7 @@ package middleware
 
 import (
 	"context"
-	response "dukkanim-api/internal/platform/http_response"
-	"dukkanim-api/internal/platform/logging"
+	"dukkanim-api/internal/platform/observability/logging"
 	"net/http"
 	"time"
 
@@ -16,42 +15,47 @@ func RequestLogging(baseLogger logging.Logger) func(http.Handler) http.Handler {
 			start := time.Now()
 			wrapped := wrapResponseWriter(w)
 
-			request_id := uuid.New()
+			request_id := uuid.New().String()
 
-			ctx := context.WithValue(r.Context(), response.RequestIdKey, request_id)
+			ctx := context.WithValue(r.Context(), "request-id", request_id)
 
-			request := map[string]any{
-				"host":       r.Host,
-				"path":       r.URL.Path,
-				"query":      r.URL.RawQuery,
-				"fragment":   r.URL.Fragment,
-				"method":     r.Method,
-				"user-agent": r.UserAgent(),
-				"target":     r.RequestURI,
-				"headers":    r.Header,
-			}
+			requestLogger := baseLogger.Using(ctx)
+			requestLogger.With(r.Context(), logging.SetRequest(logging.RequestEntry{
+				Method:    r.Method,
+				Path:      r.URL.Path,
+				Query:     r.URL.RawQuery,
+				Fragment:  r.URL.Fragment,
+				UserAgent: r.UserAgent(),
+				Headers:   r.Header,
+			}))
 
-			requestLogger := baseLogger.With(
-				ctx,
-				"request_id", request_id,
-				"request", request,
-			)
 			// Request Initiating Logging
-			requestLogger.DEBUG(ctx, "Request Started")
+			requestLogger.Debug(ctx, "Request Started")
 			// Injecting Logger to Request Context
-			ctx = logging.InjectLogger(ctx, requestLogger)
+			ctx = logging.InjectContext(ctx, requestLogger)
 			// Serving the Next Handler with new Request Context
 			next.ServeHTTP(wrapped, r.WithContext(ctx))
 
 			// Response Logging
-			responseStatus := wrapped.status
+
 			duration_ms := time.Since(start).Milliseconds()
 
-			requestLogger.DEBUG(
+			if duration_ms > 5000 {
+				requestLogger.Warning(ctx, "Duration Higher Than Treshold")
+			}
+
+			requestLogger.With(
+				ctx,
+				logging.SetDurationMS(int(duration_ms)),
+				logging.SetTimeStamp(time.Now()),
+				logging.SetResponse(logging.ResponseEntry{
+					StatusCode: wrapped.Status(),
+				}),
+			)
+
+			requestLogger.Info(
 				r.Context(),
 				"Request Completed",
-				"status_code", responseStatus,
-				"duration_ms", duration_ms,
 			)
 
 		})

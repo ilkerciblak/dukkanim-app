@@ -34,7 +34,8 @@
         "zxh404.vscode-proto3",
         "adpyke.codesnap",
         "zhuangtongfa.Material-theme",
-        "GitHub.github-vscode-theme"
+        "GitHub.github-vscode-theme",
+        "wayou.vscode-todo-highlight"
       ]
     }
   }

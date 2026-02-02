@@ -1,6 +1,5 @@
 services:
   # client-web:
-  #   depends_on:
   #     - api
   api:
     container_name: go-api
@@ -38,6 +37,34 @@ services:
     image: adminer
     ports:
       - "8081:8080"
-
+  metrics:
+    image: prom/prometheus
+    volumes:
+      - "./backend/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+  redis:
+    image: redis:7.4-alpine
+    container_name: go-redis
+    ports:
+      - "6380:6379"
+    command: --loglevel warning
+  mongo-db:
+    image: mongo
+    env_file:
+      - ./backend/.env.development
+    container_name: go-mongo
+    ports:
+      - "27017:27017"
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8082:8081"
+    env_file:
+      - ./backend/.env.development
+    depends_on:
+      - mongo-db
 volumes:
   pgdata:

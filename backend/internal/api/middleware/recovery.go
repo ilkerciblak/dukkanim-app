@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"encoding/json"
+	response "dukkanim-api/internal/platform/http_response"
 	"fmt"
 	"net/http"
 )
@@ -11,23 +11,36 @@ func Recovery(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 
-				type response struct {
-					Message string `json:"message"`
-					Error   string `json:"error"`
-				}
+				// type rr struct {
+				// 	Message string `json:"message"`
+				// 	Error   string `json:"error"`
+				// }
 
-				res := response{
-					Message: "Internal Server Error",
-					Error:   fmt.Sprint(err),
-				}
+				// res := rr{
+				// 	Message: "Internal Server Error",
+				// 	Error:   fmt.Sprint(err),
+				// }
 
-				data, err := json.Marshal(res)
-				if err != nil {
-					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				}
+				response.RespondWithProblemDetails(
+					w,
+					r.Context(),
+					http.StatusInternalServerError,
+					fmt.Sprintf("%v", err),
+					"SERVER_ERR",
+					nil,
+				)
 
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write(data)
+				// data, err := json.Marshal(res)
+				// if err != nil {
+				// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				// 	response.RespondWithProblemDetails(w, r.Context(), http.StatusInternalServerError, err.E)
+
+				// 	return
+				// }
+
+				// w.WriteHeader(http.StatusInternalServerError)
+				// _, _ = w.Write(data)
+
 			}
 
 		}()

@@ -17,31 +17,18 @@ func NewSqlConnectionConfig(driver, conn_str string) *SqlConnectionConfig {
 	}
 }
 
-// func (s *SqlConnectionConfig) InitializeConnection(errChan chan<- error) *sql.DB {
-// 	conn, err := sql.Open(s.driver, s.connectionString)
-// 	if err != nil {
-// 		errChan <- fmt.Errorf("[ERROR]: Sql Connection Could Not Initialized with %v", err)
-// 		return nil
-// 	}
-
-// 	if err := conn.Ping(); err != nil {
-// 		errChan <- fmt.Errorf("[ERROR] DB Ping with %w", err)
-// 		return nil
-// 	}
-
-// 	return conn
-// }
-
-func (s *SqlConnectionConfig) InitializeConnection() (*sql.DB, error) {
+func (s *SqlConnectionConfig) InitializeConnection(errChan chan<- error) *sql.DB {
 	conn, err := sql.Open(s.driver, s.connectionString)
+
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] DB Connection Open Failed with %v", err)
+		errChan <- fmt.Errorf("[ERROR]: Sql Connection Could Not Initialized with %v", err)
+		return nil
 	}
 
 	if err := conn.Ping(); err != nil {
-		return nil, fmt.Errorf("[ERROR] DB Connection Ping Failed with %v", err)
+		errChan <- fmt.Errorf("[ERROR] DB Ping with %w", err)
+		return nil
 	}
 
-	return conn, nil
-
+	return conn
 }

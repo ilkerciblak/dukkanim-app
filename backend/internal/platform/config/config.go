@@ -6,20 +6,30 @@ import (
 )
 
 type Config struct {
-	APP_MODE                       APP_MODE
-	APP_PORT                       string
-	CONN_STR                       string
+	APP_MODE APP_MODE
+	APP_PORT string
+	CONN_STR string
+	// Observability
+	LogLevel                       string
 	RateLimiterTimeFrameSeconds    int
 	RateLimiterRequestPerTimeFrame int
+	// REDIS
+	REDIS_ADDR string
+	// MONGO
+	MONGO_URL string
 }
 
 func Load() *Config {
+
 	return &Config{
-		APP_MODE:                       APP_MODE(getEnv("APP_MODE", string(DEVELOPMENT))),
 		APP_PORT:                       getEnv("APP_PORT", "8080"),
-		CONN_STR:                       getEnv("CONN_STR", ""),
+		LogLevel:                       getEnv("LOG_LEVEL", string(INFO)),
 		RateLimiterTimeFrameSeconds:    getInt("RateLimiter_TimeFrame_Seconds", 60),
 		RateLimiterRequestPerTimeFrame: getInt("RateLimiter_Request_Per_TimeFrame", 100),
+		CONN_STR:                       getEnv("CONN_STR", ""),
+		APP_MODE:                       APP_MODE(getEnv("APP_MODE", string(DEVELOPMENT))),
+		REDIS_ADDR:                     getEnv("REDIS_ADDR", "localhost:6379"),
+		MONGO_URL:                      getEnv("MONGO_URL", "mongodb://root:example@go-mongo:27017/"),
 	}
 }
 
@@ -48,4 +58,13 @@ const (
 	DEVELOPMENT  APP_MODE = "DEV"
 	PRODUCTION   APP_MODE = "PROD"
 	MAINTAINENCE APP_MODE = "maintainence"
+)
+
+type LOG_LEVEL string
+
+const (
+	DEBUG   LOG_LEVEL = "DEBUG"
+	INFO    LOG_LEVEL = "INFO"
+	WARNING LOG_LEVEL = "WARN"
+	ERROR   LOG_LEVEL = "ERROR"
 )
