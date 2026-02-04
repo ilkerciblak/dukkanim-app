@@ -1,0 +1,37 @@
+package ratelimiting
+
+import (
+	"context"
+	"fmt"
+	"time"
+)
+
+type slidingWindowAlgorithm struct {
+	storage           Storage
+	windowDuration    time.Duration
+	requestCountLimit int64
+}
+
+func (r *slidingWindowAlgorithm) Allow(ctx context.Context, identifier string) (bool, error) {
+	current_time := time.Now()
+	current_window := current_time.Add(-r.windowDuration)
+
+	identifierKey := fmt.Sprintf("rate_limiting:%s:request_windows", identifier)
+	current_window_key := fmt.Sprintf("w_%s", current_window)
+
+	res, err := r.storage.Get(ctx, identifier).Result()
+	if err != nil {
+
+	}
+
+	// eski requestleri temizle
+
+	// kalan requestlerin hepsini say
+
+	//simdi request count controlu yap
+
+	return false, nil
+}
+
+// Reset(ctx context.Context, identifier string) error
+// GetLimit(ctx context.Context, identifier string) (LimitInfo, error)
