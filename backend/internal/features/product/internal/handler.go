@@ -53,5 +53,6 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	span.SetStatus(tracing.Success, "")
+
 	response.RespondWithJSON(w, http.StatusCreated, nil, spanCtx)
 }

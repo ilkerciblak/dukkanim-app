@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"dukkanim-api/internal/api"
+	cache_adapters "dukkanim-api/internal/platform/caching/adapter"
 	"dukkanim-api/internal/platform/config"
 	"dukkanim-api/internal/platform/database/mongodb"
 	"dukkanim-api/internal/platform/database/postgres"
@@ -62,12 +63,14 @@ func main() {
 		errChan <- err
 	}
 
+	cache := cache_adapters.RedisAdapter(ctx, redisDb)
+
 	// 3. Initialize Platform Integrations
 	logger := logging.NewslogLogger(cfg.LogLevel)
 	tracer := tracing.NewOtelTracer()
 	metric := metrics.PrometheusMetrics()
 
-	api.ServeHttp(cfg, sql_db.Connection, logger, tracer, metric, errChan)
+	api.ServeHttp(cfg, sql_db.Connection, logger, tracer, metric, cache, *redisDb, errChan)
 
 	if err := <-errChan; err != nil {
 		fmt.Printf("\nSERVER CLOSING DUE TO: \n%v", err)
