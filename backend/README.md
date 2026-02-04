@@ -25,6 +25,23 @@
 ### Pre-requisities
 - Project's environment only requires a pre-ready `Docker` installation on local computer.
 
+1. Clone the project repository in local computer
+``` bash
+$ git clone https://github.com/ilkerciblak/dukkanim-app
+```
+> [!IMPORTANT]
+> Repository clonning is not required also redundant if you done it already in [Project Frontend Part]()
+<br/>
+
+2. Change directory to this directory
+```bash
+$ cd project_folder/backend
+```
+
+3. Build and run backend container using docker compose file
+```bash
+$ docker compose -f ../dev.docker-compose.yml up -d
+```
 #### Configuring Environment Variables
 Various project platform utilites depends on the environment variables that should be defined in `.env` file in the projects' directory. For an example, data persisting platform requires `postgres connection string` or in order to cache with `redis` implementation `redis host and port` should be declared before project run-time.
 
@@ -73,25 +90,6 @@ ME_CONFIG_BASICAUTH_USERNAME=mongoexpressuser
 ME_CONFIG_BASICAUTH_PASSWORD=mongoexpresspass
 ```
 
-
-
-1. Clone the project repository in local computer
-``` bash
-$ git clone https://github.com/ilkerciblak/dukkanim-app
-```
-> [!IMPORTANT]
-> Repository clonning is not required also redundant if you done it already in [Project Frontend Part]()
-<br/>
-
-2. Change directory to this directory
-```bash
-$ cd project_folder/backend
-```
-
-3. Build and run backend container using docker compose file
-```bash
-$ docker compose -f ../dev.docker-compose.yml up -d
-```
 
 ## Repository Structure
 
