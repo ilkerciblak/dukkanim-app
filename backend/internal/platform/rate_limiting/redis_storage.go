@@ -22,6 +22,10 @@ func RedisStorageAdapter(client *redis.Client) *redisStorage {
 func (r redisStorage) Get(ctx context.Context, key string) *storageResult {
 	res, err := r.client.Get(ctx, key).Result()
 
+	if err != nil && err == redis.Nil {
+		err = ErrNoData
+	}
+
 	return &storageResult{
 		val: res,
 		err: err,

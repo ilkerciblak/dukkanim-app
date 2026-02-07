@@ -94,6 +94,8 @@ func (cmd *storageResult) Time() (time.Time, error) {
 	return time.Parse(time.RFC3339Nano, cmd.Val())
 }
 
+var ErrNoData error
+
 type algorithmConfig struct {
 	refillRate    int64
 	tokenCapacity int64
