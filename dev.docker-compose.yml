@@ -1,7 +1,9 @@
 services:
   # client-web:
   #     - api
+  #
   api:
+    profiles: [backend]
     container_name: go-api
     volumes:
       - ./backend:/app:rw
@@ -21,9 +23,13 @@ services:
       retries: 5
     depends_on:
       - db
+      - adminer
+      - metrics
+      - redis
+      
   db:
     container_name: postgres-db
-    image: postgres
+    image: postgres:17 
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -66,5 +72,20 @@ services:
       - ./backend/.env.development
     depends_on:
       - mongo-db
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:26.5.2 
+  #   ports:
+  #     - "7080:7080"
+  #     - "7443:7443"
+  #   env_file:
+  #     - ./backend/.env.development
+  #   container_name: go-keycloak
+  #   command: ["start-dev", "--http-port", "7080", "--https-port", "7443"]
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:7080/health/ready"]
+  #     interval: 15s
+  #     timeout: 2s
+  #     retries: 15
+   
 volumes:
   pgdata:
