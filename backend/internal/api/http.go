@@ -23,8 +23,6 @@ import (
 func ServeHttp(cfg *config.Config, db *sql.DB, logger logging.Logger, tracer tracing.Tracer, metric metrics.Metrics, cache caching.Cacher, redis redis.Client, errChan chan<- error) {
 	mux := http.NewServeMux()
 
-	//TODO: Yukaridakileri disari tasi cunku ayni seyleri ws' icin falan da kullanabilirsin sonucta
-
 	http_metrics := metrics.HTTPMetrics(metric)
 
 	rl := ratelimiting.FixedWindowAlgorithm(
