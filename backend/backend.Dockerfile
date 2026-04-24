@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
  #   python3 \
   #  python3-pip \
     #nodejs \
-    #npm \
+    npm \
     ripgrep \
     fd-find \
     && rm -rf /var/lib/apt/lists/*
@@ -31,7 +31,7 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     rm nvim-linux-arm64.appimage
 
 # Nvim Config Files
-RUN git clone https://github.com/ilkerciblak/nvim-config.git ~/.config/nvim
+RUN git clone https://github.com/ilkerciblak/nvim-base-config.git ~/.config/nvim 
 
 # lazy.nvim bootstrap 
 RUN git clone --filter=blob:none \
