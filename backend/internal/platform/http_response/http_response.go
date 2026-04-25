@@ -16,10 +16,24 @@ type ProblemDetails struct {
 	Detail    string            `json:"detail,omitempty"`
 	Code      string            `json:"code"`
 	Instance  string            `json:"instance"`   // ctx
-	TraceId   string            `json:"trace_id"`   // ctx
-	RequestId string            `json:"request_id"` // ctx
+	TraceID   string            `json:"trace_id"`   // ctx
+	RequestID string            `json:"request_id"` // ctx
 	Errors    map[string]string `json:"errors,omitempty"`
 }
+
+/*
+example problem_detail json
+{
+	"type":  "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/400",
+	"title": "Bad Request",
+	"status": 400,
+	"detail": "user with 39e7f13a-d793-4d59-8466-49e5d8a0f8b4 id not found",
+	"instance": "request:013945Q5",
+	"code": "USER_NOT_FOUND",
+	"trace_id": "00-abc",
+	"request_id": "013945Q5",
+	"errors" : there is no field error so it can be ignored
+*/
 
 var detailsMap map[int]map[string]string = map[int]map[string]string{
 
@@ -183,19 +197,20 @@ func RespondWithProblemDetails(w http.ResponseWriter, ctx context.Context, statu
 }
 
 func constructProblemDetails(statusCode int, detail, code string, ctx context.Context, errors map[string]string) ProblemDetails {
-	var pd ProblemDetails = ProblemDetails{
+	pd := ProblemDetails{
 		Status: statusCode,
 		Type:   detailsMap[statusCode]["type"],
 		Title:  detailsMap[statusCode]["title"],
 		Code:   code,
-		Detail: detail}
+		Detail: detail,
+	}
 
 	if id, k := ctx.Value(RequestIdKey).(uuid.UUID); k {
-		pd.RequestId = id.String()
+		pd.RequestID = id.String()
 	}
 
 	if traceId, k := ctx.Value("trace-id").(string); k {
-		pd.TraceId = traceId
+		pd.TraceID = traceId
 	}
 
 	if instace, k := ctx.Value("request-instance").(string); k {
